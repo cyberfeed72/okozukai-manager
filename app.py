@@ -1,8 +1,12 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 import datetime
 import os
+
+# 日本語フォント設定（グラフの文字化け対策）
+matplotlib.rcParams['font.family'] = 'IPAexGothic'
 
 # CSVファイルの初期化
 LOG_FILE = "task_log.csv"
@@ -12,8 +16,10 @@ if not os.path.exists(LOG_FILE):
     pd.DataFrame(columns=["date", "task", "reward"]).to_csv(LOG_FILE, index=False)
 
 if not os.path.exists(TASKS_FILE):
-    pd.DataFrame({"task": ["トイレ掃除", "風呂掃除", "洗い物", "料理の手伝い"],
-                  "reward": [50, 50, 30, 30]}).to_csv(TASKS_FILE, index=False)
+    pd.DataFrame({
+        "task": ["トイレ掃除", "風呂掃除", "洗い物", "料理の手伝い"],
+        "reward": [50, 50, 30, 30]
+    }).to_csv(TASKS_FILE, index=False)
 
 # タスクリストの読み込み
 tasks_df = pd.read_csv(TASKS_FILE)
@@ -60,8 +66,7 @@ if total > 0:
     save = total * save_ratio / 100
     invest = total * invest_ratio / 100
 else:
-    use = save = invest = 1  # ← グラフ描画上、ゼロではなく1で仮に描画
-
+    use = save = invest = 1  # NaNを避けるため1円ずつでダミー描画
 
 # グラフ表示
 st.subheader("💰 現在の三分法残高")
@@ -72,5 +77,3 @@ st.pyplot(fig)
 # 履歴表示
 st.subheader("📜 お手伝い履歴")
 st.dataframe(log_df.sort_values("date", ascending=False))
-import matplotlib
-matplotlib.rcParams['font.family'] = 'IPAexGothic'  # 推奨フォント名（Streamlit Cloudで安定）
