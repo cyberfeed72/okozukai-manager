@@ -54,21 +54,24 @@ use_ratio = st.slider("使う (%)", 0, 100, 60)
 save_ratio = st.slider("貯める (%)", 0, 100 - use_ratio, 30)
 invest_ratio = 100 - use_ratio - save_ratio
 st.write(f"増やす (%)：{invest_ratio}")
-
-# ログと残高計算
+# ログと残高計算（ファイルが空でも安全に）
 try:
     log_df = pd.read_csv(LOG_FILE)
 except pd.errors.EmptyDataError:
     log_df = pd.DataFrame(columns=["date", "task", "reward"])
 
-total = log_df["reward"].sum() if not log_df.empty else 0
+if log_df.empty or log_df["reward"].isnull().all():
+    total = 0
+else:
+    total = log_df["reward"].sum()
 
 if total > 0:
     use = total * use_ratio / 100
     save = total * save_ratio / 100
     invest = total * invest_ratio / 100
 else:
-    use = save = invest = 1  # グラフ描画用ダミー値
+    use = save = invest = 1  # ダミー値でNaN回避（合計3円）
+
 
 # ✅ グラフ表示（フォント指定あり！）
 st.subheader("💰 現在の三分法残高")
