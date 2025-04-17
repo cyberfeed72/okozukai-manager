@@ -6,7 +6,10 @@ import datetime
 import os
 
 # 日本語フォント設定（グラフの文字化け対策）
-matplotlib.rcParams['font.family'] = 'IPAexGothic'
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['font.family'] = 'Noto Sans CJK JP'
+
 
 # CSVファイルの初期化
 LOG_FILE = "task_log.csv"
