@@ -49,10 +49,18 @@ st.write(f"増やす (%)：{invest_ratio}")
 
 # ログと残高計算
 log_df = pd.read_csv(LOG_FILE)
-total = log_df["reward"].sum()
-use = total * use_ratio / 100
-save = total * save_ratio / 100
-invest = total * invest_ratio / 100
+
+if log_df.empty:
+    total = 0
+else:
+    total = log_df["reward"].sum()
+
+if total > 0:
+    use = total * use_ratio / 100
+    save = total * save_ratio / 100
+    invest = total * invest_ratio / 100
+else:
+    use = save = invest = 0
 
 # グラフ表示
 st.subheader("💰 現在の三分法残高")
