@@ -1,15 +1,13 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib
+from matplotlib import font_manager  # ← フォント指定に必要
 import datetime
 import os
 
-# 日本語フォント設定（グラフの文字化け対策）
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.rcParams['font.family'] = 'Noto Sans CJK JP'
-
+# ✅ フォントファイルの読み込み（文字化け防止）
+font_path = "NotoSansJP-ExtraLight.ttf"
+jp_font = font_manager.FontProperties(fname=font_path)
 
 # CSVファイルの初期化
 LOG_FILE = "task_log.csv"
@@ -45,7 +43,8 @@ st.subheader("🧹 今日のお手伝い")
 task = st.selectbox("お手伝い内容を選んでください", tasks_df["task"].tolist())
 if st.button("報酬を記録"):
     reward = tasks_df[tasks_df["task"] == task]["reward"].values[0]
-    new_log = pd.DataFrame([[datetime.date.today(), task, reward]], columns=["date", "task", "reward"])
+    new_log = pd.DataFrame([[datetime.date.today(), task, reward]],
+                           columns=["date", "task", "reward"])
     new_log.to_csv(LOG_FILE, mode='a', header=False, index=False)
     st.success(f"{task} を記録しました！ {reward}円を獲得！")
 
@@ -69,12 +68,15 @@ if total > 0:
     save = total * save_ratio / 100
     invest = total * invest_ratio / 100
 else:
-    use = save = invest = 1  # NaNを避けるため1円ずつでダミー描画
+    use = save = invest = 1  # グラフ描画用ダミー値
 
-# グラフ表示
+# ✅ グラフ表示（フォント指定あり！）
 st.subheader("💰 現在の三分法残高")
 fig, ax = plt.subplots()
-ax.pie([use, save, invest], labels=["使う", "貯める", "増やす"], autopct="%1.1f%%")
+ax.pie([use, save, invest],
+       labels=["使う", "貯める", "増やす"],
+       autopct="%1.1f%%",
+       textprops={'fontproperties': jp_font})
 st.pyplot(fig)
 
 # 履歴表示
