@@ -72,3 +72,5 @@ st.pyplot(fig)
 # 履歴表示
 st.subheader("📜 お手伝い履歴")
 st.dataframe(log_df.sort_values("date", ascending=False))
+import matplotlib
+matplotlib.rcParams['font.family'] = 'IPAexGothic'  # 推奨フォント名（Streamlit Cloudで安定）
