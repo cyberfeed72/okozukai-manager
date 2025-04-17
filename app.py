@@ -48,19 +48,20 @@ invest_ratio = 100 - use_ratio - save_ratio
 st.write(f"増やす (%)：{invest_ratio}")
 
 # ログと残高計算
-log_df = pd.read_csv(LOG_FILE)
+try:
+    log_df = pd.read_csv(LOG_FILE)
+except pd.errors.EmptyDataError:
+    log_df = pd.DataFrame(columns=["date", "task", "reward"])
 
-if log_df.empty:
-    total = 0
-else:
-    total = log_df["reward"].sum()
+total = log_df["reward"].sum() if not log_df.empty else 0
 
 if total > 0:
     use = total * use_ratio / 100
     save = total * save_ratio / 100
     invest = total * invest_ratio / 100
 else:
-    use = save = invest = 0
+    use = save = invest = 1  # ← グラフ描画上、ゼロではなく1で仮に描画
+
 
 # グラフ表示
 st.subheader("💰 現在の三分法残高")
